@@ -14,8 +14,18 @@ def recup(liste,elm):
         if liste[i][1] == elm: return i
     return "L'élément n'est pas présent dans la liste"
     
+def longueur_moyenne(source,codage):
+    '''Cette fonction calcule la longueur moyenne d'un codage. Elle prend en entrée une liste de tuple (frequence,motif) et une autre liste de tuple (code, motif).'''
+    long = 0
+    for (freq,motif) in source:
+        for (code,motifBis) in codage :
+            if motif==motifBis :
+                long += len(code)*freq
+    return long
+    
 def Huffman(tab_proba):
-    """Cette fonction retourne une liste de tuple (code, motif)"""
+    """Cette fonction prend en entrée une liste de tuple (frequence,motif)
+    et retourne une liste de tuple (code, motif)"""
     m = len(tab_proba)
     C = [("0","Initial")]*m                                                                #C est le tableau de tuple que l'on renverra, il est composé de (code, motifACoder)
     if m == 2 :                                                                            #Cas de base de notre algorithme récursif
@@ -38,8 +48,10 @@ test_tab = [(0.05,"a"),(0.9,"b"),(0.05,"c")]
     
 #Source sans mémoire 3-extension
 tableau = [(0.729,"000"),(0.081,"001"),(0.081,"010"),(0.009,"011"),(0.081,"100"),(0.009,"101"),(0.009,"110"),(0.001,"111")]
-print (Huffman(tableau))
-print (entropie(tableau))
+sol = Huffman(tableau)
+print (sol)
+print ("entropie : ",entropie(tableau))
+print ("Longueur moyenne de notre codage :",longueur_moyenne(tableau,sol))
 
 
 
