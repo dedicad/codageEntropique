@@ -1,0 +1,66 @@
+\documentclass[a4paper,12pt,french]{article}
+%Déclaration des packages
+
+\usepackage[latin1,utf8]{inputenc}  
+\usepackage{ucs}
+\usepackage{url}
+\usepackage[babel=true]{csquotes}
+\usepackage{amsfonts,amsmath,amsthm}
+\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{lscape}
+\usepackage{chngpage}
+\usepackage{pifont}
+\usepackage{listings}
+\usepackage{color}
+\usepackage[T1]{fontenc}
+%\usepackage{enumitem}
+\newcommand{\ul}{\underline}
+
+
+\lstnewenvironment{code}[1][]{  
+ \lstset{
+  basicstyle=\largel,
+  columns=flexible,
+  basicstyle=\ttfamily,
+  language=Python,  % On choisit le language qui sera utilise dans cet environnement
+  morekeywords={input},
+  keywordstyle=\color{blue},  % On choisit la couleur des mots cles (def, while, if, for, try et tous les autres) de python
+  commentstyle=\color{red!90},  % On choisit la couleur des commentaires
+  breaklines,
+  breakindent=1em, % On regle l'espacement pour l'indentation
+  xleftmargin=0.2em, % On regle la marge de gauche (a l'interieur de la "boite" de code)
+  xrightmargin=0.2em, % On choisit la marge de droite
+  frame=single,
+  rulecolor=\color{orange},
+  backgroundcolor=\color{yellow!40}, % Le fond est a 30% de couleur jaune
+  #1
+ }
+}{}
+
+\setlength\fboxrule{1pt}
+
+
+% Début du document
+\begin{document}
+\title{Rapport Projet de Synthèse}
+\author{Marius AMBAYRAC et Andrés Garcia}
+\date{2018}
+\maketitle
+\clearpage
+
+\section{Introduction}
+
+
+
+\section{Corps Principal}
+	
+	
+ 	
+\section{Annexe}
+	\subsection{Codage de Hamming}
+	\begin{code}
+	
+	\end{code}
+\end{document}
