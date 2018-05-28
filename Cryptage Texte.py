@@ -105,14 +105,41 @@ test = code('andrés garçia')
 print ("Decodage en cours")
 print ("Le texte décodé : ",decode(test[0],test[1]))
 
+import marshal
+#Module pour stocker des listes dans un fichier txt 
 
+chemin = "C:/Users\Dedicad\Documents\Centrale-Supélec\Cours\Projet synthèse, codage entropique\Code\codageEntropique/"
 
+def code_fichier(fichier_clair,fichier_crypte,fichier_codage):
+    '''Cette fonction prend en entrée le nom d'un fichier texte à crypte et les noms des fichiers où on stockera les sorties et retourne en sortie le code de Huffman obtenu
+     ainsi que le texte codé dans le fichier fichier_crypte, qu'elle crée s'il n'existe pas'''
+    fichier = open(chemin+fichier_clair,'r') 
+    contenu = fichier.read()
+    fichier.close()
+    temp = code(contenu)
+    fichier = open(chemin+fichier_crypte,'w')
+    fichier.write(temp[0])
+    fichier.close()
+    fichier = open(chemin+fichier_crypte,'w')
+    fichier.write(temp[0])
+    fichier.close()
+    marshal.dump(temp[1], open(chemin+fichier_codage,"wb"))
+    print ("Le codage a bien été effectué") 
 
+test2 = code_fichier('texte.txt','crypte.txt','codeHuffman.txt')
 
+def decode_fichier(fichier_codage,fichier_crypte,fichier_cible):
+    '''Cette fonction prend en entrée un fichier contenant le texte crypté, un autre fichier contenant le codage de Huffman associé, et le fichier où on écrira le texte en clair'''
+    fichier = open(chemin+fichier_crypte,'r') 
+    contenu = fichier.read()
+    fichier.close()
+    res = decode (contenu,marshal.load(open(chemin+fichier_codage,"rb")))
+    fichier = open(chemin+fichier_cible,'w') 
+    fichier.write(res)
+    fichier.close()
+    print ("Le fichier a été décodé")
 
-
-
-
+test3 = decode_fichier('codeHuffman.txt','crypte.txt','texte_decode.txt')
 
 
 
