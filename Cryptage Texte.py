@@ -38,18 +38,21 @@ def decode(texte,codage):
         dico[code] = motif
     res = ""
     tps = time()
-    i = 0
-    while i <len(texte):
-        j = i+1
-        section =  texte[i:j]
+    n = len(texte)
+    while len(texte)>0:
+        j = 1
+        section =  texte[0:j]
         while section not in dico :
             j += 1
-            section =  texte[i:j]
+            section =  texte[0:j]
         res += dico[section]
         texte = texte[j:]
-        if tps-time() > 10:
+        #Les lignes qui suivent permettent de suivre l'avancement de la fonctions
+        if time()-tps > 10:
             print ("On avance")
             tps = time()
+        if len(texte)%((n//100+1)*2) ==0 :
+            print ("Il reste ",len(texte)//(n//100+1),"% du texte à décoder.")
     return res
 
 test = code('andrés garçia')
@@ -101,7 +104,7 @@ def code_image(image,fichier_codage,fichier_crypte):
     im = Image.open(chemin+image)
     liste = (list(im.getdata()))
     #Ici on va aplatir la liste, on pourrait aussi choisir de crypter les valeurs de niveaux de gris, chacune ensemble
-    contenu = ""
+    contenu = str(im.size[0])+";"+str(im.size[1])
     for item in liste : 
         contenu += str(item)+";"
     #Le ; sert de séparateur, comme dans les fichiers csv
@@ -123,20 +126,32 @@ def decode_image(image_crypte,fichier_codage,fichier_cible):
     fichier.close()
     print ("over here")
     res = decode (temp,marshal.load(open(chemin+fichier_codage,"rb")))
+    #1e étape : on détermine les données de taille de l'image
+    long_temp = []
+    i = 0
+    for m in range(2):
+        j = i+1
+        section = res[i:j]
+        while res[j] != ';':
+            j += 1
+        section = res[i:j-1]
+        long_temp.append(section)
+        i= j+1
+    long = (long_temp[0],long_temp[1])
     contenu = []
     n = len(res)
     print ("la")
-    i = 0
+    #Maintenant on détermine les valeurs (en niveau de gris) de chaque pixel
     while i<n:
         j = i+1
-        section = re[i:j]
+        section = res[i:j]
         while res[j] != ';':
             j += 1
         section = res[i:j-1]
         contenu.append(section)
         i= j+1
     print ("ici")
-    image_finale = Image.new('g',len(contenu))
+    image_finale = Image.new('L',long)
     image_finale.putdata(contenu)
     image_finale.save(chemin+fichier_cible)
     print ("Le fichier a été décodé")
