@@ -1,6 +1,7 @@
-chemin = "C:/Users\Dedicad\Documents\Centrale-Supélec\Cours\Projet synthèse, codage entropique\Code\codageEntropique/"
+chemin = "C:/Users\Dedicad\Documents\Centrale-Supélec\Cours\Projet synthèse, codage entropique\Code\codageEntropique/"                              #Emplacement du dossier courant
 import sys 
 sys.path.append(chemin)
+from time import *
 from CodageHuffmanAvecTuple import *
 
 
@@ -36,6 +37,7 @@ def decode(texte,codage):
     for (code,motif) in codage:
         dico[code] = motif
     res = ""
+    tps = time()
     i = 0
     while i <len(texte):
         j = i+1
@@ -45,6 +47,9 @@ def decode(texte,codage):
             section =  texte[i:j]
         res += dico[section]
         texte = texte[j:]
+        if tps-time() > 10:
+            print ("On avance")
+            tps = time()
     return res
 
 test = code('andrés garçia')
@@ -52,6 +57,7 @@ test = code('andrés garçia')
 #print ("Decodage en cours")
 #print ("Le texte décodé : ",decode(test[0],test[1]))
 
+#########################################
 import marshal
 #Module pour stocker des listes dans un fichier txt 
 
@@ -72,7 +78,7 @@ def code_fichier(fichier_clair,fichier_crypte,fichier_codage):
     marshal.dump(temp[1], open(chemin+fichier_codage,"wb"))
     print ("Le codage a bien été effectué") 
 
-test2 = code_fichier('texte.txt','crypte.txt','codeHuffman.txt')
+#test2 = code_fichier('texte.txt','crypte.txt','codeHuffman.txt')
 
 def decode_fichier(fichier_codage,fichier_crypte,fichier_cible):
     '''Cette fonction prend en entrée un fichier contenant le texte crypté, un autre fichier contenant le codage de Huffman associé, et le fichier où on écrira le texte en clair'''
@@ -85,7 +91,63 @@ def decode_fichier(fichier_codage,fichier_crypte,fichier_cible):
     fichier.close()
     print ("Le fichier a été décodé")
 
-test3 = decode_fichier('codeHuffman.txt','crypte.txt','texte_decode.txt')
+#test3 = decode_fichier('codeHuffman.txt','crypte.txt','texte_decode.txt')
+
+#########################################
+
+from PIL import Image                                           # On import le module concu pour la manipulation d'image
+def code_image(image,fichier_codage,fichier_crypte):
+    '''Cette fonction prend en paramètre une image à coder et un fichier où enregistrer le codage de Huffman associé et le fichier où sera stocké l'image crypté sous forme binaire'''
+    im = Image.open(chemin+image)
+    liste = (list(im.getdata()))
+    #Ici on va aplatir la liste, on pourrait aussi choisir de crypter les valeurs de niveaux de gris, chacune ensemble
+    contenu = ""
+    for item in liste : 
+        contenu += str(item)+";"
+    #Le ; sert de séparateur, comme dans les fichiers csv
+    temp = code(contenu)
+    fichier = open(chemin+fichier_crypte,'w')
+    fichier.write(temp[0])
+    fichier.close()
+    fichier = open(chemin+fichier_crypte,'w')
+    fichier.write(temp[0])
+    fichier.close()
+    marshal.dump(temp[1], open(chemin+fichier_codage,"wb"))
+    print ("Le codage a bien été effectué") 
+
+code_image("image.png","codage_image.txt","image_crypte.txt")
+
+def decode_image(image_crypte,fichier_codage,fichier_cible):
+    fichier = open(chemin+image_crypte,'r') 
+    temp = fichier.read()
+    fichier.close()
+    print ("over here")
+    res = decode (temp,marshal.load(open(chemin+fichier_codage,"rb")))
+    contenu = []
+    n = len(res)
+    print ("la")
+    i = 0
+    while i<n:
+        j = i+1
+        section = re[i:j]
+        while res[j] != ';':
+            j += 1
+        section = res[i:j-1]
+        contenu.append(section)
+        i= j+1
+    print ("ici")
+    image_finale = Image.new('g',len(contenu))
+    image_finale.putdata(contenu)
+    image_finale.save(chemin+fichier_cible)
+    print ("Le fichier a été décodé")
+
+decode_image("image_crypte.txt","codage_image.txt","image_decode.png")
+
+
+
+
+
+
 
 
 
