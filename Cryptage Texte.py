@@ -1,3 +1,6 @@
+#from CodageHuffmanAvecTuple import *
+##########################
+#Cette importation ne fonctionnant pas, je copie colle à la main pour le moment...
 from math import *
 
 def entropie(tab_proba):
@@ -49,12 +52,58 @@ test_tab = [(0.05,"a"),(0.9,"b"),(0.05,"c")]
 #Source sans mémoire 3-extension
 tableau = [(0.729,"000"),(0.081,"001"),(0.081,"010"),(0.009,"011"),(0.081,"100"),(0.009,"101"),(0.009,"110"),(0.001,"111")]
 sol = Huffman(tableau)
-print (sol)
-print ("entropie : ",entropie(tableau))
-print ("Longueur moyenne de notre codage :",longueur_moyenne(tableau,sol))
+#print (sol)
+#print ("entropie : ",entropie(tableau))
+#print ("Longueur moyenne de notre codage :",longueur_moyenne(tableau,sol))
 
+######################################
+def code(texte):
+    '''Cette fonction prend en entrée un texte sous forme de string, calcule la fréquence d'apparition de chaque symbole,
+    et retourne en sortie le code de Huffman obtenu ainsi que le texte codé'''
+    n = len(texte)
+    if n<2 : return ('Le texte est court')
+    else :
+        dico = {}
+        for lettre in texte:
+            if lettre not in dico :
+                dico[lettre] = 1
+            else : dico[lettre] += 1
+        tab = []
+        for cle in dico.keys():
+            tab.append((dico[cle]/n,cle))
+        sol = Huffman(tab)
+        #On recrée un dictionnaire parce que c'est plus facile à utiliser
+        dico_code = {}
+        for (code,motif) in sol:
+            dico[motif] = code
+        res = ""
+        for lettre in texte:
+            res += dico[lettre]
+        return (res,sol)
+        
+def decode(texte,codage):
+    '''Cette fonction prend en entrée un texte crypté par Huffman et le codage de Huffman associé. 
+    Elle retourne le texte décodé'''
+    #On crée un dico dont la clé est le code et la valeur le motif associé, parce que c'est plus facile à utilisesr
+    dico = {}
+    for (code,motif) in codage:
+        dico[code] = motif
+    res = ""
+    i = 0
+    while i <len(texte):
+        j = i+1
+        section =  texte[i:j]
+        while section not in dico :
+            j += 1
+            section =  texte[i:j]
+        res += dico[section]
+        texte = texte[j:]
+    return res
 
-
+test = code('andrés garçia')
+#print (test[0])
+print ("Decodage en cours")
+print ("Le texte décodé : ",decode(test[0],test[1]))
 
 
 
