@@ -103,10 +103,10 @@ def code_image(image,fichier_codage,fichier_crypte):
     '''Cette fonction prend en paramètre une image à coder et un fichier où enregistrer le codage de Huffman associé et le fichier où sera stocké l'image crypté sous forme binaire'''
     im = Image.open(chemin+image)
     liste = (list(im.getdata()))
-    #Ici on va aplatir la liste, on pourrait aussi choisir de crypter les valeurs de niveaux de gris, chacune ensemble
-    contenu = str(im.size[0])+";"+str(im.size[1])
-    for item in liste : 
-        contenu += str(item)+";"
+    #Ici on va aplatir la liste et la convertir en une chaine de caractère
+    contenu = str(im.size[0])+";"+str(im.size[1])+";"
+    for pixel in liste : 
+        contenu += str(pixel)+";"
     #Le ; sert de séparateur, comme dans les fichiers csv
     temp = code(contenu)
     fichier = open(chemin+fichier_crypte,'w')
@@ -118,13 +118,12 @@ def code_image(image,fichier_codage,fichier_crypte):
     marshal.dump(temp[1], open(chemin+fichier_codage,"wb"))
     print ("Le codage a bien été effectué") 
 
-code_image("image.png","codage_image.txt","image_crypte.txt")
+code_image("image.bmp","codage_image.txt","image_crypte.txt")
 
 def decode_image(image_crypte,fichier_codage,fichier_cible):
     fichier = open(chemin+image_crypte,'r') 
     temp = fichier.read()
     fichier.close()
-    print ("over here")
     res = decode (temp,marshal.load(open(chemin+fichier_codage,"rb")))
     #1e étape : on détermine les données de taille de l'image
     long_temp = []
@@ -134,29 +133,41 @@ def decode_image(image_crypte,fichier_codage,fichier_cible):
         section = res[i:j]
         while res[j] != ';':
             j += 1
-        section = res[i:j-1]
+        section = res[i:j]
         long_temp.append(section)
         i= j+1
-    long = (long_temp[0],long_temp[1])
+    long = (int(long_temp[0]),int(long_temp[1]))
     contenu = []
+    #On enlève les parenthèses parce qu'elles nous gênent
+    res = res.replace('(','')
+    res = res.replace(')','')
     n = len(res)
-    print ("la")
     #Maintenant on détermine les valeurs (en niveau de gris) de chaque pixel
     while i<n:
         j = i+1
         section = res[i:j]
         while res[j] != ';':
             j += 1
-        section = res[i:j-1]
-        contenu.append(section)
+        section = res[i:j]
+        #On a maintenant isolé une section du type '107,103,22' que l'on doit transformer en tuple
+        pix = []
+        for l in range(2):
+            m = 0
+            p = 1
+            while section[p] != ',':
+                p += 1
+            pix.append(int(section[m:p]))
+            section = section[p+1:]
+        pix.append(int(section))
+        pix = (pix[0],pix[1],pix[2])
+        contenu.append(pix)
         i= j+1
-    print ("ici")
-    image_finale = Image.new('L',long)
+    image_finale = Image.new('RGB',long)
     image_finale.putdata(contenu)
     image_finale.save(chemin+fichier_cible)
     print ("Le fichier a été décodé")
 
-decode_image("image_crypte.txt","codage_image.txt","image_decode.png")
+decode_image("image_crypte.txt","codage_image.txt","image_decode.bmp")
 
 
 
