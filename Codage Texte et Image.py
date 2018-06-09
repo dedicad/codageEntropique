@@ -12,6 +12,7 @@ def code(texte):
     if n<2 : return ('Le texte est court')
     else :
         dico = {}
+        #On calcule la distribution de probabilite correspondant a notre texte
         for lettre in texte:
             if lettre not in dico :
                 dico[lettre] = 1
@@ -25,6 +26,7 @@ def code(texte):
         for (code,motif) in sol:
             dico[motif] = code
         res = ""
+        #On code le texte grace a notre dictionnaire
         for lettre in texte:
             res += dico[lettre]
         return (res,sol)
@@ -42,9 +44,11 @@ def decode(texte,codage):
     while len(texte)>0:
         j = 1
         section =  texte[0:j]
+        #On détermine la prochaine section a decoder
         while section not in dico :
             j += 1
             section =  texte[0:j]
+        #On a trouve la section, on utilise alors juste la correspondance code <--> mottif, fournie par le dictionnaire "codage"
         res += dico[section]
         texte = texte[j:]
         #Les lignes qui suivent permettent de suivre l'avancement de la fonctions
@@ -68,33 +72,41 @@ import marshal
 def code_fichier(fichier_clair,fichier_crypte,fichier_codage):
     '''Cette fonction prend en entrée le nom d'un fichier texte à crypte et les noms des fichiers où on stockera les sorties et retourne en sortie le code de Huffman obtenu
      ainsi que le texte codé dans le fichier fichier_crypte, qu'elle crée s'il n'existe pas'''
+    #On extrait le texte du fichier
     fichier = open(chemin+fichier_clair,'r') 
     contenu = fichier.read()
     fichier.close()
+    #On code le texte grace a notre fonction qui code un texte (qui s'appuie elle meme sur le codage de Huffmann)
     temp = code(contenu)
+    #On ecrit dans un fichier le texte compresse obtenu
     fichier = open(chemin+fichier_crypte,'w')
     fichier.write(temp[0])
     fichier.close()
-    fichier = open(chemin+fichier_crypte,'w')
-    fichier.write(temp[0])
-    fichier.close()
+    #On stocke la correspondance de Huffmann code <--> motif dans un fichier texte grace au module marshal
     marshal.dump(temp[1], open(chemin+fichier_codage,"wb"))
     print ("Le codage a bien été effectué") 
 
-#test2 = code_fichier('texte.txt','crypte.txt','codeHuffman.txt')
+# test2 = code_fichier('texte.txt','crypte.txt','codeHuffman.txt')
+#code_fichier('LesMiserablesTome1.txt','LesMiserablesTome1crypte.txt','LesMiserablesTome1codeHuffman.txt')
+
+
 
 def decode_fichier(fichier_codage,fichier_crypte,fichier_cible):
     '''Cette fonction prend en entrée un fichier contenant le texte crypté, un autre fichier contenant le codage de Huffman associé, et le fichier où on écrira le texte en clair'''
+    #On recupere le texte compresse
     fichier = open(chemin+fichier_crypte,'r') 
     contenu = fichier.read()
     fichier.close()
+    #On recupere la correspondance motif <--> code et on applique notre fonction de decodage
     res = decode (contenu,marshal.load(open(chemin+fichier_codage,"rb")))
+    #On ecrit le texte decode dans un fichier
     fichier = open(chemin+fichier_cible,'w') 
     fichier.write(res)
     fichier.close()
     print ("Le fichier a été décodé")
 
-#test3 = decode_fichier('codeHuffman.txt','crypte.txt','texte_decode.txt')
+# test3 = decode_fichier('codeHuffman.txt','crypte.txt','texte_decode.txt')
+#decode_fichier('LesMiserablesTome1codeHuffman.txt','LesMiserablesTome1crypte.txt','LesMiserablesTome1texte_decode.txt')
 
 #########################################
 
@@ -103,27 +115,30 @@ def code_image(image,fichier_codage,fichier_crypte):
     '''Cette fonction prend en paramètre une image à coder et un fichier où enregistrer le codage de Huffman associé et le fichier où sera stocké l'image crypté sous forme binaire'''
     im = Image.open(chemin+image)
     liste = (list(im.getdata()))
-    #Ici on va aplatir la liste et la convertir en une chaine de caractère
+    #On stocke la taille de l'image
     contenu = str(im.size[0])+";"+str(im.size[1])+";"
+    #Ici on va aplatir la liste et la convertir en une chaine de caractère
     for pixel in liste : 
         contenu += str(pixel)+";"
     #Le ; sert de séparateur, comme dans les fichiers csv
+    #On code le contenu recupere comme si c'etait un texte : on code les nombres chiffre par chiffre
     temp = code(contenu)
+    #On ecrit le resultat dans un fichier
     fichier = open(chemin+fichier_crypte,'w')
     fichier.write(temp[0])
     fichier.close()
-    fichier = open(chemin+fichier_crypte,'w')
-    fichier.write(temp[0])
-    fichier.close()
+    #On stocke la correspondance code <--> motif dans un autre fichier
     marshal.dump(temp[1], open(chemin+fichier_codage,"wb"))
     print ("Le codage a bien été effectué") 
 
-code_image("image.bmp","codage_image.txt","image_crypte.txt")
+#code_image("image.bmp","codage_image.txt","image_crypte.txt")
 
 def decode_image(image_crypte,fichier_codage,fichier_cible):
+    #On recupere le texte codé
     fichier = open(chemin+image_crypte,'r') 
     temp = fichier.read()
     fichier.close()
+    #On decode le texte apres avoir recupere le dictionnaire de correspondance
     res = decode (temp,marshal.load(open(chemin+fichier_codage,"rb")))
     #1e étape : on détermine les données de taille de l'image
     long_temp = []
@@ -142,7 +157,7 @@ def decode_image(image_crypte,fichier_codage,fichier_cible):
     res = res.replace('(','')
     res = res.replace(')','')
     n = len(res)
-    #Maintenant on détermine les valeurs (en niveau de gris) de chaque pixel
+    #Maintenant on détermine les valeurs de chaque pixel
     while i<n:
         j = i+1
         section = res[i:j]
@@ -161,13 +176,16 @@ def decode_image(image_crypte,fichier_codage,fichier_cible):
         pix.append(int(section))
         pix = (pix[0],pix[1],pix[2])
         contenu.append(pix)
-        i= j+1
+        i= j+1 
+    #On cree l'image de la bonne taille
     image_finale = Image.new('RGB',long)
+    #On y insere dedans les valeurs des pixels
     image_finale.putdata(contenu)
+    #On enregistre l'image sur notre disque dur
     image_finale.save(chemin+fichier_cible)
     print ("Le fichier a été décodé")
 
-decode_image("image_crypte.txt","codage_image.txt","image_decode.bmp")
+#decode_image("image_crypte.txt","codage_image.txt","image_decode.bmp")
 
 
 
