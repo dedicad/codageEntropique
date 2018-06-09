@@ -46,18 +46,18 @@ def Huffman(tab_proba):
     
 #Source sans mémoire 3-extension
 tableau = [(0.729,"000"),(0.081,"001"),(0.081,"010"),(0.009,"011"),(0.081,"100"),(0.009,"101"),(0.009,"110"),(0.001,"111")]
-#sol = Huffman(tableau)
-#print (sol)
-#print ("entropie : ",entropie(tableau))
-#print ("Longueur moyenne de notre codage :",longueur_moyenne(tableau,sol))
+# sol = Huffman(tableau)
+# print (sol)
+# print ("entropie : ",entropie(tableau))
+# print ("Longueur moyenne de notre codage :",longueur_moyenne(tableau,sol))
 
 
 #Source avec mémoire 3-extension
 tableau2 = [(0.824,"000"),(0.0549,"001"),(0.0293,"010"),(0.0293,"011"),(0.0293,"100"),(0.0019,"101"),(0.0156,"110"),(0.0156,"111")]
-#sol2 = Huffman(tableau)
-#print (sol2)
-#print ("entropie : ",entropie(tableau2))
-#print ("Longueur moyenne de notre codage :",longueur_moyenne(tableau2,sol2))
+# sol2 = Huffman(tableau2)
+# print (sol2)
+# print ("entropie : ",entropie(tableau2))
+# print ("Longueur moyenne de notre codage :",longueur_moyenne(tableau2,sol2))
 
 
 
